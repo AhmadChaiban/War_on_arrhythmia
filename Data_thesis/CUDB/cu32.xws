@@ -1,0 +1,2 @@
+-r cu32
+-p http://physionet.org/physiobank/database/cudb/cu32.xws
