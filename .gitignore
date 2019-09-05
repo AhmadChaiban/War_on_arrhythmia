@@ -6,3 +6,9 @@
 /Oversampled_Data
 /LSSVM
 Thesis_Notebook_Draft.ipynb
+/SVM_Parameter_Predictions
+/Individual_SVM_Parameter_Predictions
+/lssvm_feature_analysis
+LS_SVM_Results\.PNG
+
+*.csv

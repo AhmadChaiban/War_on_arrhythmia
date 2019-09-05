@@ -24,6 +24,11 @@ Y_test(1,:) = [];
 Y_test(:,1) = [];
 
 
+%%Training a multiclass svm to evaluate TTT:
+tic
+multisvm(X_train,Y_train,X_test);
+toc
+
 %%Training the LS-SVM on the data
 
 
@@ -31,14 +36,25 @@ gam = 200;
 sig2 = 20;
 type = 'classification';
 
+tic
 [alpha,b] = trainlssvm({X_train,Y_train,type,gam,sig2,'RBF_kernel'});
-
+toc
 %%predicting 
 
 Y_pred = simlssvm({X_train,Y_train,type,gam,sig2,'RBF_kernel'},{alpha,b},X_test);
-
-
+Y_pred_proba = latentlssvm({X_train,Y_train,type,gam,sig2,'RBF_kernel'},{alpha,b},X_test);
 %%Confusion matrices and recall method:
+
+feature_order = [19 8 18 20 21 1 5 3 6 2 4 7 15 16 12 13 14 11 9 10 17];
+indexes = [];
+for i = 1:21
+    indexes = [indexes;feature_order(i)];
+    [alpha,b] = trainlssvm({X_train(:,indexes),Y_train,type,gam,sig2,'RBF_kernel'});
+    Y_pred = simlssvm({X_train(:,indexes),Y_train,type,gam,sig2,'RBF_kernel'},{alpha,b},X_test(:,indexes));
+    Y_pred_proba = latentlssvm({X_train(:,indexes),Y_train,type,gam,sig2,'RBF_kernel'},{alpha,b},X_test(:,indexes));
+    csvwrite(strcat('lssvm_featureAnalysis_',num2str(i),'_pred.csv'),Y_pred);
+    csvwrite(strcat('lssvm_featureAnalysis_',num2str(i),'_pred_proba.csv'),Y_pred);
+end
 
 confMatrix_1 = confusionmat(Y_test(:,1),Y_pred(:,1));
 confMatrix_1
@@ -68,6 +84,14 @@ accuracy
 Eval = Evaluate(Y_test,Y_pred);
 Eval
 
+csvwrite('lssvm_proba_pred.csv',Y_pred_proba);
 
+[area, se, thresholds, oneMinusSpec, sens, TN, TP, FN, FP] = roc(Y_test(:,1), Y_pred(:,1));
 
+[tpr,fpr,thresholds] = roc(Y_pred_proba(:,3),Y_test(:,3));
 
+specificity = 1- (FP/(FP+TN));
+sensitivity = TP/(TP+TN);
+
+%plot(oneMinusSpec,sens,'r'),xlabel("False Positive Rate"),ylabel("True Positive Rate");
+plotroc(Y_test,Y_pred_proba,'r');
