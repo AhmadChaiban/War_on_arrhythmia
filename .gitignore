@@ -12,3 +12,7 @@ Thesis_Notebook_Draft.ipynb
 LS_SVM_Results\.PNG
 
 *.csv
+
+.idea/
+
+Archive/
