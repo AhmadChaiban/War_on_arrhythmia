@@ -16,3 +16,9 @@ LS_SVM_Results\.PNG
 .idea/
 
 Archive/
+
+.ipynb_checkpoints/
+
+__pycache__/
+
+record_data.json
