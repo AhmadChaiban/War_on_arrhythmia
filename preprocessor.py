@@ -2,14 +2,13 @@ import wfdb
 import numpy as np
 from scipy.signal import butter, filtfilt
 
-
 def moving_average(l, N):
     sum = 0
-    result = list( 0 for x in l) 
-    for i in range( 0, N ):
+    result = list(0 for x in l) 
+    for i in range(0, N):
         sum = sum + l[i]
         result[i] = sum / (i+1)
-    for i in range( N, len(l) ):
+    for i in range(N, len(l)):
         sum = sum - l[i-N] + l[i]
         result[i] = sum / N
     return result
